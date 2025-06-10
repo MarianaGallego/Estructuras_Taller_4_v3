@@ -54,8 +54,12 @@ public class QuadTreeNode {
 
 
         for (int[] p : points) {
-            NE.insert(p); NW.insert(p); SE.insert(p); SW.insert(p);
+            if (NE.insert(p)) continue;
+            if (NW.insert(p)) continue;
+            if (SE.insert(p)) continue;
+            if (SW.insert(p)) continue;
         }
+
 
         points.clear(); // ya se reubicaron
         divided = true;
@@ -93,6 +97,7 @@ public class QuadTreeNode {
                 SE.containsPoint(point) || SW.containsPoint(point));
     }
 
+
     // Consulta por RANGO RECTANGULAR
     public List<int[]> rangeQuery(int xMinQ, int xMaxQ, int yMinQ, int yMaxQ) {
         metrics.incrementDiskAccess();
@@ -127,6 +132,69 @@ public class QuadTreeNode {
     private boolean intersects(int xMinQ, int xMaxQ, int yMinQ, int yMaxQ) {
         return !(xMax < xMinQ || xMin > xMaxQ || yMax < yMinQ || yMin > yMaxQ);
     }
+
+    public int[] nearestNeighbor(int[] target) {
+        return nearestNeighborRec(target, new double[]{Double.MAX_VALUE});
+    }
+
+    private int[] nearestNeighborRec(int[] target, double[] bestDist) {
+        int[] bestPoint = null;
+
+        for (int[] p : points) {
+            double dist = distance(p, target);
+            if (dist < bestDist[0]) {
+                bestDist[0] = dist;
+                bestPoint = p;
+            }
+        }
+
+        if (!divided) return bestPoint;
+
+        QuadTreeNode[] children = {NE, NW, SE, SW};
+        List<QuadTreeNode> orden = new ArrayList<>();
+
+        for (QuadTreeNode child : children) {
+            if (child.contains(target)) {
+                orden.add(0, child);
+            } else {
+                orden.add(child);
+            }
+        }
+
+        for (QuadTreeNode child : orden) {
+            if (child.boundsIntersectCircle(target, bestDist[0])) {
+                int[] candidate = child.nearestNeighborRec(target, bestDist);
+                if (candidate != null && distance(candidate, target) < bestDist[0]) {
+                    bestDist[0] = distance(candidate, target);
+                    bestPoint = candidate;
+                }
+            }
+        }
+
+        return bestPoint;
+    }
+
+    private boolean contains(int[] point) {
+        int x = point[0], y = point[1];
+        return x >= xMin && x <= xMax && y >= yMin && y <= yMax;
+    }
+
+    private boolean boundsIntersectCircle(int[] center, double radius) {
+        int x = center[0], y = center[1];
+        int closestX = Math.max(xMin, Math.min(x, xMax));
+        int closestY = Math.max(yMin, Math.min(y, yMax));
+        double dx = x - closestX;
+        double dy = y - closestY;
+        return (dx * dx + dy * dy <= radius * radius);
+    }
+
+    private double distance(int[] a, int[] b) {
+        int dx = a[0] - b[0];
+        int dy = a[1] - b[1];
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+
 
 
 

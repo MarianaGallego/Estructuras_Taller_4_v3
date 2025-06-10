@@ -35,6 +35,12 @@ public class QuadTree {
         return root.rangeQuery(xMin, xMax, yMin, yMax);
     }
 
+    public int[] nearestNeighbor(int[] target) {
+        return root.nearestNeighbor(target);
+    }
+
+
+
 
     public void draw(java.awt.Graphics g, int width, int height) {
         root.draw(g, width, height);

@@ -63,6 +63,22 @@ public class MainQuadUI {
             System.out.println("Tiempo (ns): " + metrics.getElapsedTime());
             System.out.println("Accesos simulados a disco: " + metrics.getDiskAccesses() + "\n");
 
+            int[] consulta = {50, 50};
+            metrics.resetDiskAccesses();
+            metrics.startTimer();
+            int[] vecino = tree.nearestNeighbor(consulta);
+            metrics.endTimer();
+
+            if (vecino != null) {
+                System.out.println("-- CONSULTA VECINO MÁS CERCANO --");
+                System.out.println("Consulta: (" + consulta[0] + ", " + consulta[1] + ")");
+                System.out.println("Vecino más cercano: (" + vecino[0] + ", " + vecino[1] + ")");
+                System.out.println("Tiempo (ns): " + metrics.getElapsedTime());
+                System.out.println("Accesos simulados a disco: " + metrics.getDiskAccesses());
+            } else {
+                System.out.println("No se encontró vecino. ¿Se insertaron puntos?");
+            }
+
 
 
             JFrame frame = new JFrame("Visualización QuadTree");

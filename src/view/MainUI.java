@@ -185,18 +185,18 @@ public class MainUI extends JFrame {
 
             metrics.resetDiskAccesses();
             metrics.startTimer();
-            /*if (estructuraSelector.getSelectedItem().equals("KD-Tree")) {
+            if (estructuraSelector.getSelectedItem().equals("KD-Tree")) {
                 vecino = kdTree.nearestNeighbor(target);
             } else if (estructuraSelector.getSelectedItem().equals("QuadTree")) {
                 vecino = quadTree.nearestNeighbor(target);
             } else {
                 vecino = gridFile.nearestNeighbor(target);
-            }*/
-            if (estructuraSelector.getSelectedItem().equals("KD-Tree")) {
+            }
+            /*if (estructuraSelector.getSelectedItem().equals("KD-Tree")) {
                 vecino = kdTree.nearestNeighbor(target);
             } else {
                 vecino = gridFile.nearestNeighbor(target);
-            }
+            }*/
             metrics.endTimer();
             repaint();
             mostrarMetricas("Vecino más cercano", 1, vecino);
